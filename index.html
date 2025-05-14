@@ -3,67 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>筋トレメニュー作成 & 記録アプリ</title>
+    <title>マイ筋トレプランナー</title> {/* タイトルを変更 */}
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Interフォントを適用 */
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        h2 { margin-bottom: 0.5rem; font-weight: 600; }
+        .workout-card { border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; background-color: #f9fafb; }
+        .workout-card h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; color: #1f2937; }
+        .workout-card ul { list-style: none; padding-left: 0; } /* 編集UIのためリストスタイル除去 */
+        .workout-card li { margin-bottom: 0.75rem; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: #fff; }
+        button { transition: background-color 0.3s ease; }
+        .tab-button { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; }
+        .record-table th, .record-table td { padding: 0.75rem 1rem; white-space: nowrap; }
+        .record-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .editable-exercise-item input[type="text"], .editable-exercise-item input[type="number"] {
+            padding: 0.375rem 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.25rem; /* スマホ表示で改行された時用 */
         }
-        /* 見出しやボタンのスタイル調整 */
-        h2 {
-            margin-bottom: 0.5rem; /* 下マージン追加 */
-            font-weight: 600; /* 少し太く */
+        .editable-exercise-item input.exercise-name-input { width: calc(100% - 180px); min-width: 150px; } /* 幅調整 */
+        .editable-exercise-item input.exercise-sets-input, .editable-exercise-item input.exercise-reps-input { width: 70px; }
+        .delete-exercise-btn, .add-exercise-btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
         }
-        .workout-card {
-            border: 1px solid #e5e7eb; /* 枠線 */
-            border-radius: 0.5rem; /* 角丸 */
-            padding: 1rem; /* 内側余白 */
-            margin-bottom: 1rem; /* 下マージン */
-            background-color: #f9fafb; /* 背景色 */
-        }
-        .workout-card h3 {
-            font-size: 1.125rem; /* 少し大きめ */
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1f2937; /* 濃いグレー */
-        }
-        .workout-card ul {
-            list-style: disc; /* リストマーカー */
-            padding-left: 1.5rem; /* 左パディング */
-            color: #4b5563; /* グレー */
-        }
-         .workout-card li {
-            margin-bottom: 0.25rem; /* リストアイテム間のマージン */
-        }
-        /* ボタンのスタイル */
-        button {
-            transition: background-color 0.3s ease; /* ホバー効果 */
-        }
-        /* タブのスタイル */
-        .tab-button {
-            transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        }
-        /* 記録テーブルのスタイル */
-        .record-table th, .record-table td {
-            padding: 0.75rem 1rem; /* セルのパディング調整 */
-            white-space: nowrap; /* 折り返し防止 */
-        }
-        .record-table th {
-            text-align: left;
-            font-size: 0.75rem; /* ヘッダーのフォントサイズを小さく */
-            text-transform: uppercase; /* 大文字に */
-            letter-spacing: 0.05em; /* 文字間隔 */
-        }
+        .delete-exercise-btn { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .delete-exercise-btn:hover { background-color: #fecaca; }
+        .add-exercise-btn { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; margin-top:0.5rem; }
+        .add-exercise-btn:hover { background-color: #bbf7d0; }
+
     </style>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-4 md:p-8 font-sans">
 
     <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">筋トレメニュー作成 & 記録アプリ</h1>
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">マイ筋トレプランナー</h1> {/* 表示タイトルを変更 */}
 
         <div class="mb-6 border-b border-gray-200">
             <nav class="flex space-x-1 sm:space-x-4" aria-label="Tabs">
@@ -105,29 +87,28 @@
                     </select>
                 </div>
             </div>
-
             <div class="text-center mb-6">
                 <button id="generateBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md shadow">
                     メニュー作成
                 </button>
             </div>
-
             <div id="workoutPlan" class="mt-6 space-y-4">
                 <p class="text-center text-gray-500">設定を選択して「メニュー作成」ボタンを押してください。</p>
             </div>
         </section>
 
         <section id="recordKeeperSection" style="display:none;">
-            <h2 class="text-xl md:text-2xl font-semibold mb-4 text-gray-700">トレーニング記録</h2>
+             <h2 class="text-xl md:text-2xl font-semibold mb-4 text-gray-700">トレーニング記録</h2>
             <form id="recordForm" class="space-y-4 bg-gray-50 p-4 rounded-md shadow">
                 <div>
                     <label for="recordDate" class="block text-sm font-medium text-gray-700">日付:</label>
                     <input type="date" id="recordDate" name="recordDate" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 </div>
                 <div>
-                    <label for="recordMenuName" class="block text-sm font-medium text-gray-700">メニュー名 (種目):</label> <select id="recordMenuName" name="recordMenuName" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <label for="recordMenuName" class="block text-sm font-medium text-gray-700">メニュー名 (種目):</label>
+                    <select id="recordMenuName" name="recordMenuName" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="">種目を選択してください</option>
-                        </select>
+                    </select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
@@ -149,30 +130,24 @@
                     </button>
                 </div>
             </form>
-
             <h3 class="text-lg font-semibold mt-8 mb-3 text-gray-700">記録一覧</h3>
             <div id="recordsDisplay" class="space-y-3 overflow-x-auto">
                 <p class="text-gray-500">まだ記録はありません。</p>
-                </div>
+            </div>
         </section>
-
     </div>
 
     <script>
-        // --- DOM要素の取得 ---
+        // --- DOM要素の取得 (変更なし) ---
         const frequencySelect = document.getElementById('frequency');
         const durationSelect = document.getElementById('duration');
         const intensitySelect = document.getElementById('intensity');
         const generateBtn = document.getElementById('generateBtn');
         const workoutPlanDiv = document.getElementById('workoutPlan');
-
-        // タブ関連のDOM要素
         const tabMenuCreator = document.getElementById('tabMenuCreator');
         const tabRecordKeeper = document.getElementById('tabRecordKeeper');
         const menuCreatorSection = document.getElementById('menuCreatorSection');
         const recordKeeperSection = document.getElementById('recordKeeperSection');
-
-        // 記録フォーム関連のDOM要素
         const recordForm = document.getElementById('recordForm');
         const recordDateInput = document.getElementById('recordDate');
         const recordMenuNameSelect = document.getElementById('recordMenuName');
@@ -181,287 +156,298 @@
         const recordSetsInput = document.getElementById('recordSets');
         const recordsDisplayDiv = document.getElementById('recordsDisplay');
 
-        // 生成された個別エクササイズ名を保持するグローバル変数
-        let currentGeneratedIndividualExercises = [];
+        // --- グローバル変数 ---
+        let currentPlanData = null; // 生成・編集中のプランデータを保持
 
-        // --- エクササイズデータベース (内容は前回と同様なので簡略化) ---
-        const exercises = {
-            chest: {
-                beginner: ["腕立て伏せ (膝つき可)", "マシンチェストプレス"],
-                intermediate: ["ベンチプレス", "ダンベルフライ", "インクラインダンベルプレス"],
-                advanced: ["ベンチプレス (高重量)", "インクラインベンチプレス", "ディップス (加重)", "ケーブルクロスオーバー"]
-            },
-            back: {
-                beginner: ["ラットプルダウン", "シーテッドロウ"],
-                intermediate: ["懸垂 (アシスト可)", "ベントオーバーロウ", "ワンハンドダンベルロウ"],
-                advanced: ["懸垂 (加重)", "デッドリフト", "バーベルロウ", "Tバーロウ"]
-            },
-            legs: {
-                beginner: ["自重スクワット", "レッグプレス", "レッグエクステンション", "レッグカール"],
-                intermediate: ["バーベルスクワット", "ルーマニアンデッドリフト", "ランジ", "カーフレイズ"],
-                advanced: ["スクワット (高重量)", "フロントスクワット", "ブルガリアンスクワット", "スティッフレッグデッドリフト", "ヘビーレッグプレス"]
-            },
-            shoulders: {
-                beginner: ["マシンショルダープレス", "サイドレイズ (軽め)"],
-                intermediate: ["ダンベルショルダープレス", "サイドレイズ", "フロントレイズ"],
-                advanced: ["バーベルオーバーヘッドプレス", "アーノルドプレス", "アップライトロウ", "フェイスプル"]
-            },
-            biceps: {
-                beginner: ["マシンカール", "ダンベルカール (軽め)"],
-                intermediate: ["バーベルカール", "ダンベルカール", "ハンマーカール"],
-                advanced: ["バーベルカール (チーティング可)", "インクラインダンベルカール", "コンセントレーションカール"]
-            },
-            triceps: {
-                beginner: ["ケーブルプッシュダウン", "マシンディップス"],
-                intermediate: ["スカルクラッシャー", "ケーブルプッシュダウン", "オーバーヘッドエクステンション"],
-                advanced: ["クローズグリップベンチプレス", "ライイングトライセプスエクステンション", "ローププッシュダウン (高強度)"]
-            },
-            core: {
-                beginner: ["クランチ", "プランク"],
-                intermediate: ["レッグレイズ", "ロシアンツイスト", "サイドプランク"],
-                advanced: ["ハンギングレッグレイズ", "アブローラー", "ケーブルクランチ"]
-            }
+        // --- エクササイズデータベース (変更なし) ---
+        const exercises = { /* ... (前回と同様の内容) ... */
+            chest: { beginner: ["腕立て伏せ (膝つき可)", "マシンチェストプレス"], intermediate: ["ベンチプレス", "ダンベルフライ", "インクラインダンベルプレス"], advanced: ["ベンチプレス (高重量)", "インクラインベンチプレス", "ディップス (加重)", "ケーブルクロスオーバー"] }, back: { beginner: ["ラットプルダウン", "シーテッドロウ"], intermediate: ["懸垂 (アシスト可)", "ベントオーバーロウ", "ワンハンドダンベルロウ"], advanced: ["懸垂 (加重)", "デッドリフト", "バーベルロウ", "Tバーロウ"] }, legs: { beginner: ["自重スクワット", "レッグプレス", "レッグエクステンション", "レッグカール"], intermediate: ["バーベルスクワット", "ルーマニアンデッドリフト", "ランジ", "カーフレイズ"], advanced: ["スクワット (高重量)", "フロントスクワット", "ブルガリアンスクワット", "スティッフレッグデッドリフト", "ヘビーレッグプレス"] }, shoulders: { beginner: ["マシンショルダープレス", "サイドレイズ (軽め)"], intermediate: ["ダンベルショルダープレス", "サイドレイズ", "フロントレイズ"], advanced: ["バーベルオーバーヘッドプレス", "アーノルドプレス", "アップライトロウ", "フェイスプル"] }, biceps: { beginner: ["マシンカール", "ダンベルカール (軽め)"], intermediate: ["バーベルカール", "ダンベルカール", "ハンマーカール"], advanced: ["バーベルカール (チーティング可)", "インクラインダンベルカール", "コンセントレーションカール"] }, triceps: { beginner: ["ケーブルプッシュダウン", "マシンディップス"], intermediate: ["スカルクラッシャー", "ケーブルプッシュダウン", "オーバーヘッドエクステンション"], advanced: ["クローズグリップベンチプレス", "ライイングトライセプスエクステンション", "ローププッシュダウン (高強度)"] }, core: { beginner: ["クランチ", "プランク"], intermediate: ["レッグレイズ", "ロシアンツイスト", "サイドプランク"], advanced: ["ハンギングレッグレイズ", "アブローラー", "ケーブルクランチ"] }
         };
 
-        // --- タブ切り替え処理 ---
-        function setActiveTab(activeTabButton, activeSection) {
-            [tabMenuCreator, tabRecordKeeper].forEach(button => {
-                button.classList.remove('text-indigo-600', 'border-indigo-500');
-                button.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                button.removeAttribute('aria-current');
-            });
-            [menuCreatorSection, recordKeeperSection].forEach(section => {
-                section.style.display = 'none';
-            });
-
-            activeTabButton.classList.add('text-indigo-600', 'border-indigo-500');
-            activeTabButton.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            activeTabButton.setAttribute('aria-current', 'page');
-            activeSection.style.display = 'block';
+        // --- タブ切り替え処理 (変更なし) ---
+        function setActiveTab(activeTabButton, activeSection) { /* ... (前回と同様) ... */
+            [tabMenuCreator, tabRecordKeeper].forEach(button => { button.classList.remove('text-indigo-600', 'border-indigo-500'); button.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'); button.removeAttribute('aria-current'); });
+            [menuCreatorSection, recordKeeperSection].forEach(section => { section.style.display = 'none'; });
+            activeTabButton.classList.add('text-indigo-600', 'border-indigo-500'); activeTabButton.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'); activeTabButton.setAttribute('aria-current', 'page'); activeSection.style.display = 'block';
         }
-
         tabMenuCreator.addEventListener('click', () => setActiveTab(tabMenuCreator, menuCreatorSection));
-        tabRecordKeeper.addEventListener('click', () => {
-            setActiveTab(tabRecordKeeper, recordKeeperSection);
-            populateRecordMenuNameDropdown();
-            loadAndDisplayRecords();
-        });
+        tabRecordKeeper.addEventListener('click', () => { setActiveTab(tabRecordKeeper, recordKeeperSection); updateRecordMenuDropdownWithOptions(); loadAndDisplayRecords(); });
 
         // --- メニュー生成ロジック ---
         generateBtn.addEventListener('click', () => {
             const frequency = parseInt(frequencySelect.value);
             const duration = durationSelect.value;
             const intensity = intensitySelect.value;
-
-            const plan = generateWorkoutPlan(frequency, duration, intensity);
-
-            // 生成されたプランから個別エクササイズ名を抽出・保存
-            currentGeneratedIndividualExercises = [];
-            const exerciseNameSet = new Set(); // 重複を避けるためSetを使用
-            plan.days.forEach(day => {
-                day.exercises.forEach(exerciseString => {
-                    // "(セット数 x レップ数)" の部分を除去してエクササイズ名のみ取得
-                    const exerciseName = exerciseString.split('(')[0].trim();
-                    if (exerciseName) { // 空文字でないことを確認
-                        exerciseNameSet.add(exerciseName);
-                    }
-                });
-            });
-            currentGeneratedIndividualExercises = Array.from(exerciseNameSet).sort(); // Setを配列に変換し、アルファベット順にソート
-
-            displayPlan(plan);
-            populateRecordMenuNameDropdown(); // メニュー作成後にもプルダウンを更新
+            currentPlanData = generateWorkoutPlan(frequency, duration, intensity); // グローバル変数に保存
+            displayPlan(currentPlanData);
+            updateRecordMenuDropdownWithOptions();
         });
 
+        // セット数とレップ数をオブジェクトで返すように変更
+        function getSetsRepsObject(duration, intensity) {
+            let sets = 3;
+            let reps = "10-12回";
+            if (duration === 'short') sets = 2;
+            if (duration === 'long') sets = 4;
+            if (intensity === 'beginner') reps = "12-15回";
+            if (intensity === 'intermediate') reps = "8-12回";
+            if (intensity === 'advanced') { reps = "6-10回"; sets += 1; }
+            if (sets < 2) sets = 2;
+            return { sets: sets, repsString: reps };
+        }
+
+        // メインのメニュー生成関数 (エクササイズをオブジェクト形式で格納)
         function generateWorkoutPlan(frequency, duration, intensity) {
             const plan = {
                 title: `週${frequency}回 / ${getDurationText(duration)} / ${getIntensityText(intensity)} プラン`,
                 days: [],
                 notes: getGeneralNotes(intensity)
             };
-            const setsReps = getSetsReps(duration, intensity);
+            // const setsReps = getSetsReps(duration, intensity); // これはもう使わない
+            const createExerciseObject = (name, sets, reps) => ({ name, sets, reps, id: Date.now() + Math.random().toString(36).substring(2,7) }); // ID追加
+
+            // 各分割法でエクササイズオブジェクトを作成
+            const createWorkoutDay = (dayTitle, exerciseConfigs) => {
+                const setsRepsObj = getSetsRepsObject(duration, intensity); // 各部位の基本セットレップ
+                return {
+                    title: dayTitle,
+                    exercises: exerciseConfigs.flatMap(({ part, count }) =>
+                        selectExercises(part, intensity, count).map(exName =>
+                            createExerciseObject(exName, setsRepsObj.sets, setsRepsObj.repsString)
+                        )
+                    )
+                };
+            };
 
             switch (frequency) {
                 case 1:
-                    plan.days.push(createFullBodyWorkout("Day 1: 全身", duration, intensity, setsReps));
+                    plan.days.push(createWorkoutDay("Day 1: 全身", [
+                        { part: 'chest', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) },
+                        { part: 'back', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) },
+                        { part: 'legs', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) },
+                        { part: 'shoulders', count: 1 },
+                        { part: 'core', count: 1 }
+                    ]));
                     break;
                 case 2:
-                    plan.days.push(createUpperBodyWorkout("Day 1: 上半身", duration, intensity, setsReps));
-                    plan.days.push(createLowerBodyWorkout("Day 2: 下半身 & コア", duration, intensity, setsReps));
+                    plan.days.push(createWorkoutDay("Day 1: 上半身", [
+                        { part: 'chest', count: duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2) },
+                        { part: 'back', count: duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2) },
+                        { part: 'shoulders', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) },
+                        { part: 'biceps', count: (duration === 'short' || duration === 'medium') ? 1 : 1 },
+                        { part: 'triceps', count: (duration === 'short' || duration === 'medium') ? 1 : 1 }
+                    ]));
+                    plan.days.push(createWorkoutDay("Day 2: 下半身 & コア", [
+                        { part: 'legs', count: duration === 'short' ? 2 : (duration === 'medium' ? 3 : 4) },
+                        { part: 'core', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }
+                    ]));
                     break;
-                case 3:
-                    plan.days.push(createPushWorkout("Day 1: Push (胸/肩/三頭筋)", duration, intensity, setsReps));
-                    plan.days.push(createPullWorkout("Day 2: Pull (背中/二頭筋)", duration, intensity, setsReps));
-                    plan.days.push(createLegsCoreWorkout("Day 3: Legs & Core (脚/腹筋)", duration, intensity, setsReps));
+                case 3: // PPL
+                    plan.days.push(createWorkoutDay("Day 1: Push (胸/肩/三頭筋)", [
+                        { part: 'chest', count: duration === 'short' ? 1 : (duration === 'medium' ? 2 : 3) },
+                        { part: 'shoulders', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }, // 前・中中心
+                        { part: 'triceps', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }
+                    ]));
+                    plan.days.push(createWorkoutDay("Day 2: Pull (背中/二頭筋)", [
+                        { part: 'back', count: duration === 'short' ? 2 : (duration === 'medium' ? 3 : 4) },
+                        { part: 'biceps', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }
+                    ]));
+                    plan.days.push(createWorkoutDay("Day 3: Legs & Core (脚/腹筋)", [
+                        { part: 'legs', count: duration === 'short' ? 2 : (duration === 'medium' ? 3 : 4) },
+                        { part: 'core', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }
+                    ]));
                     break;
-                case 4:
-                    plan.days.push(createUpperBodyWorkout("Day 1: 上半身 A", duration, intensity, setsReps, 'A'));
-                    plan.days.push(createLowerBodyWorkout("Day 2: 下半身 A", duration, intensity, setsReps, 'A'));
-                    plan.days.push(createUpperBodyWorkout("Day 3: 上半身 B", duration, intensity, setsReps, 'B'));
-                    plan.days.push(createLowerBodyWorkout("Day 4: 下半身 B", duration, intensity, setsReps, 'B'));
+                case 4: // 上下x2
+                    const upperBodyConfigA = [ { part: 'chest', count: 2 }, { part: 'back', count: 2 }, { part: 'shoulders', count: 1 }, { part: 'biceps', count: 1 }, { part: 'triceps', count: 1 }];
+                    const lowerBodyConfigA = [ { part: 'legs', count: 3 }, { part: 'core', count: 1 }];
+                    // Bは種目を変える想定だが、ここでは種目数は同じにする
+                    plan.days.push(createWorkoutDay("Day 1: 上半身 A", upperBodyConfigA));
+                    plan.days.push(createWorkoutDay("Day 2: 下半身 A", lowerBodyConfigA));
+                    plan.days.push(createWorkoutDay("Day 3: 上半身 B", upperBodyConfigA));
+                    plan.days.push(createWorkoutDay("Day 4: 下半身 B", lowerBodyConfigA));
                     break;
-                case 5:
-                    plan.days.push(createBodyPartWorkout("Day 1: 胸", ['chest'], duration, intensity, setsReps));
-                    plan.days.push(createBodyPartWorkout("Day 2: 背中", ['back'], duration, intensity, setsReps));
-                    plan.days.push(createBodyPartWorkout("Day 3: 脚", ['legs'], duration, intensity, setsReps));
-                    plan.days.push(createBodyPartWorkout("Day 4: 肩", ['shoulders'], duration, intensity, setsReps));
-                    plan.days.push(createBodyPartWorkout("Day 5: 腕 & コア", ['biceps', 'triceps', 'core'], duration, intensity, setsReps));
+                case 5: // 部位別
+                    plan.days.push(createWorkoutDay("Day 1: 胸", [{ part: 'chest', count: duration === 'short' ? 3 : (duration === 'medium' ? 4 : 5) }]));
+                    plan.days.push(createWorkoutDay("Day 2: 背中", [{ part: 'back', count: duration === 'short' ? 3 : (duration === 'medium' ? 4 : 5) }]));
+                    plan.days.push(createWorkoutDay("Day 3: 脚", [{ part: 'legs', count: duration === 'short' ? 3 : (duration === 'medium' ? 4 : 5) }]));
+                    plan.days.push(createWorkoutDay("Day 4: 肩", [{ part: 'shoulders', count: duration === 'short' ? 3 : (duration === 'medium' ? 3 : 4) }]));
+                    plan.days.push(createWorkoutDay("Day 5: 腕 & コア", [
+                        { part: 'biceps', count: duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2) },
+                        { part: 'triceps', count: duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2) },
+                        { part: 'core', count: duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2) }
+                    ]));
                     break;
             }
             return plan;
         }
 
-        // --- 各分割法のメニュー作成補助関数 (内容は前回と同様) ---
-        function createFullBodyWorkout(dayTitle, duration, intensity, setsReps) {
-            const numExercisesPerGroup = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            return {
-                title: dayTitle,
-                exercises: [
-                    ...selectExercises('chest', intensity, numExercisesPerGroup),
-                    ...selectExercises('back', intensity, numExercisesPerGroup),
-                    ...selectExercises('legs', intensity, numExercisesPerGroup),
-                    ...selectExercises('shoulders', intensity, 1),
-                    ...selectExercises('core', intensity, 1)
-                ].map(ex => `${ex} (${setsReps})`)
-            };
-        }
-        function createUpperBodyWorkout(dayTitle, duration, intensity, setsReps, variation = null) {
-            const numMain = duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2);
-            const numAux = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            return {
-                title: dayTitle,
-                exercises: [
-                    ...selectExercises('chest', intensity, numMain),
-                    ...selectExercises('back', intensity, numMain),
-                    ...selectExercises('shoulders', intensity, numAux),
-                    ...selectExercises('biceps', intensity, numAux > 1 ? 1 : 0),
-                    ...selectExercises('triceps', intensity, numAux > 1 ? 1 : 0)
-                ].map(ex => `${ex} (${setsReps})`)
-            };
-        }
-        function createLowerBodyWorkout(dayTitle, duration, intensity, setsReps, variation = null) {
-            const numMain = duration === 'short' ? 2 : (duration === 'medium' ? 3 : 4);
-            const numCore = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            return {
-                title: dayTitle,
-                exercises: [
-                    ...selectExercises('legs', intensity, numMain),
-                    ...selectExercises('core', intensity, numCore)
-                ].map(ex => `${ex} (${setsReps})`)
-            };
-        }
-        function createPushWorkout(dayTitle, duration, intensity, setsReps) {
-            const numChest = duration === 'short' ? 1 : (duration === 'medium' ? 2 : 3);
-            const numShoulder = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            const numTriceps = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            return {
-                title: dayTitle,
-                exercises: [
-                    ...selectExercises('chest', intensity, numChest),
-                    ...selectExercises('shoulders', intensity, numShoulder),
-                    ...selectExercises('triceps', intensity, numTriceps)
-                ].map(ex => `${ex} (${setsReps})`)
-            };
-        }
-        function createPullWorkout(dayTitle, duration, intensity, setsReps) {
-            const numBack = duration === 'short' ? 2 : (duration === 'medium' ? 3 : 4);
-            const numBiceps = duration === 'short' ? 1 : (duration === 'medium' ? 1 : 2);
-            return {
-                title: dayTitle,
-                exercises: [
-                    ...selectExercises('back', intensity, numBack),
-                    ...selectExercises('biceps', intensity, numBiceps)
-                ].map(ex => `${ex} (${setsReps})`)
-            };
-        }
-        function createLegsCoreWorkout(dayTitle, duration, intensity, setsReps) {
-            return createLowerBodyWorkout(dayTitle, duration, intensity, setsReps);
-        }
-        function createBodyPartWorkout(dayTitle, bodyParts, duration, intensity, setsReps) {
-            let numExercises = 0;
-            if (bodyParts.length === 1) {
-                 numExercises = duration === 'short' ? 3 : (duration === 'medium' ? 4 : 5);
-            } else {
-                 numExercises = duration === 'short' ? 1 : (duration === 'medium' ? 2 : 2);
-            }
-            let workoutExercises = [];
-            bodyParts.forEach(part => {
-                workoutExercises = workoutExercises.concat(selectExercises(part, intensity, numExercises));
-            });
-            return {
-                title: dayTitle,
-                exercises: workoutExercises.map(ex => `${ex} (${setsReps})`)
-            };
-        }
 
-        // メニュー表示関数 (内容は前回と同様)
+        // メニュー表示関数 (編集UIを生成)
         function displayPlan(plan) {
-            workoutPlanDiv.innerHTML = '';
+            workoutPlanDiv.innerHTML = ''; // 表示エリアをクリア
+            if (!plan) {
+                 workoutPlanDiv.innerHTML = '<p class="text-center text-gray-500">メニューを生成してください。</p>';
+                 return;
+            }
+
             const titleElement = document.createElement('h2');
             titleElement.textContent = plan.title;
             titleElement.className = 'text-xl md:text-2xl font-semibold mb-4 text-center text-indigo-700';
             workoutPlanDiv.appendChild(titleElement);
 
-            plan.days.forEach(day => {
+            plan.days.forEach((day, dayIndex) => {
                 const dayCard = document.createElement('div');
                 dayCard.className = 'workout-card';
                 const dayTitle = document.createElement('h3');
                 dayTitle.textContent = day.title;
                 dayCard.appendChild(dayTitle);
-                const exerciseList = document.createElement('ul');
-                day.exercises.forEach(exercise => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = exercise;
-                    exerciseList.appendChild(listItem);
+
+                const exerciseListElement = document.createElement('ul');
+                day.exercises.forEach((exercise, exerciseIndex) => {
+                    exerciseListElement.appendChild(createEditableExerciseElement(exercise, dayIndex, exerciseIndex));
                 });
-                dayCard.appendChild(exerciseList);
+                dayCard.appendChild(exerciseListElement);
+
+                // 種目追加ボタン
+                const addBtn = document.createElement('button');
+                addBtn.textContent = '＋ この日に種目を追加';
+                addBtn.className = 'add-exercise-btn block mx-auto';
+                addBtn.dataset.dayIndex = dayIndex;
+                addBtn.addEventListener('click', handleAddExercise);
+                dayCard.appendChild(addBtn);
+
                 workoutPlanDiv.appendChild(dayCard);
             });
 
-            const notesCard = document.createElement('div');
-            notesCard.className = 'workout-card bg-yellow-50 border-yellow-200';
-            const notesTitle = document.createElement('h3');
-            notesTitle.textContent = "トレーニングの注意点";
-            notesTitle.className = 'text-yellow-800';
-            notesCard.appendChild(notesTitle);
-            const notesList = document.createElement('ul');
-            notesList.className = 'list-disc pl-5 text-yellow-700 text-sm';
-            plan.notes.forEach(note => {
-                const noteItem = document.createElement('li');
-                noteItem.textContent = note;
-                noteItem.classList.add('mb-1');
-                notesList.appendChild(noteItem);
-            });
-            notesCard.appendChild(notesList);
+            // 注意事項表示 (変更なし)
+            const notesCard = document.createElement('div'); /* ... (前回と同様) ... */
+            notesCard.className = 'workout-card bg-yellow-50 border-yellow-200'; const notesTitle = document.createElement('h3'); notesTitle.textContent = "トレーニングの注意点"; notesTitle.className = 'text-yellow-800'; notesCard.appendChild(notesTitle); const notesList = document.createElement('ul'); notesList.className = 'list-disc pl-5 text-yellow-700 text-sm'; plan.notes.forEach(note => { const noteItem = document.createElement('li'); noteItem.textContent = note; noteItem.classList.add('mb-1'); notesList.appendChild(noteItem); }); notesCard.appendChild(notesList);
             workoutPlanDiv.appendChild(notesCard);
         }
 
+        // 編集可能なエクササイズ要素を作成する関数
+        function createEditableExerciseElement(exercise, dayIndex, exerciseIndex) {
+            const listItem = document.createElement('li');
+            listItem.className = 'editable-exercise-item flex flex-wrap items-center justify-between'; // flexで横並び
+            listItem.dataset.exerciseId = exercise.id; // IDを付与
+
+            const inputsWrapper = document.createElement('div'); // 入力フィールドをまとめる
+            inputsWrapper.className = 'flex-grow';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.value = exercise.name;
+            nameInput.placeholder = '種目名';
+            nameInput.className = 'exercise-name-input';
+            nameInput.dataset.dayIndex = dayIndex;
+            nameInput.dataset.exerciseIndex = exerciseIndex;
+            nameInput.dataset.field = 'name';
+            nameInput.addEventListener('change', handleExerciseInputChange);
+            inputsWrapper.appendChild(nameInput);
+
+            const setsInput = document.createElement('input');
+            setsInput.type = 'number';
+            setsInput.value = exercise.sets;
+            setsInput.placeholder = 'セット';
+            setsInput.min = "1";
+            setsInput.className = 'exercise-sets-input';
+            setsInput.dataset.dayIndex = dayIndex;
+            setsInput.dataset.exerciseIndex = exerciseIndex;
+            setsInput.dataset.field = 'sets';
+            setsInput.addEventListener('change', handleExerciseInputChange);
+            inputsWrapper.appendChild(setsInput);
+
+            const repsInput = document.createElement('input');
+            repsInput.type = 'text'; // 回数は "8-12" のような文字列も許容するためtext
+            repsInput.value = exercise.reps;
+            repsInput.placeholder = '回数';
+            repsInput.className = 'exercise-reps-input';
+            repsInput.dataset.dayIndex = dayIndex;
+            repsInput.dataset.exerciseIndex = exerciseIndex;
+            repsInput.dataset.field = 'reps';
+            repsInput.addEventListener('change', handleExerciseInputChange);
+            inputsWrapper.appendChild(repsInput);
+
+            listItem.appendChild(inputsWrapper);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '削除';
+            deleteBtn.className = 'delete-exercise-btn ml-2 flex-shrink-0'; // 右端に配置
+            deleteBtn.dataset.dayIndex = dayIndex;
+            deleteBtn.dataset.exerciseIndex = exerciseIndex;
+            deleteBtn.addEventListener('click', handleDeleteExercise);
+            listItem.appendChild(deleteBtn);
+
+            return listItem;
+        }
+
+        // エクササイズ入力変更時のハンドラ
+        function handleExerciseInputChange(event) {
+            const { dayIndex, exerciseIndex, field } = event.target.dataset;
+            const value = (field === 'sets') ? parseInt(event.target.value) : event.target.value;
+
+            if (currentPlanData && currentPlanData.days[dayIndex] && currentPlanData.days[dayIndex].exercises[exerciseIndex]) {
+                currentPlanData.days[dayIndex].exercises[exerciseIndex][field] = value;
+                updateRecordMenuDropdownWithOptions(); // プルダウンも更新
+            }
+        }
+
+        // エクササイズ削除時のハンドラ
+        function handleDeleteExercise(event) {
+            const { dayIndex, exerciseIndex } = event.target.dataset;
+            if (confirm('この種目を削除してもよろしいですか？')) {
+                if (currentPlanData && currentPlanData.days[dayIndex]) {
+                    currentPlanData.days[dayIndex].exercises.splice(exerciseIndex, 1);
+                    displayPlan(currentPlanData); // 表示を再描画
+                    updateRecordMenuDropdownWithOptions(); // プルダウンも更新
+                }
+            }
+        }
+
+        // エクササイズ追加時のハンドラ
+        function handleAddExercise(event) {
+            const { dayIndex } = event.target.dataset;
+            if (currentPlanData && currentPlanData.days[dayIndex]) {
+                const newExercise = {
+                    name: '',
+                    sets: 3, // デフォルト値
+                    reps: '10回', // デフォルト値
+                    id: Date.now() + Math.random().toString(36).substring(2,7)
+                };
+                currentPlanData.days[dayIndex].exercises.push(newExercise);
+                displayPlan(currentPlanData); // 表示を再描画
+                // 新しく追加された種目の入力欄にフォーカスを当てるなどのUX改善も可能
+                updateRecordMenuDropdownWithOptions();
+            }
+        }
+
+
         // --- 記録機能関連 ---
+        // メニュー名プルダウンを更新する関数 (currentPlanData を参照)
+        function updateRecordMenuDropdownWithOptions() {
+            recordMenuNameSelect.innerHTML = '<option value="">種目を選択してください</option>';
+            const existingOptions = new Set();
 
-        // メニュー名プルダウンを生成されたメニューで更新する関数
-        function populateRecordMenuNameDropdown() {
-            recordMenuNameSelect.innerHTML = '<option value="">種目を選択してください</option>'; // 初期化し、プレースホルダー変更
-            const existingOptions = new Set(); // 重複を避けるためのセット
-
-            // 現在生成されている個別エクササイズ名を追加
-            if (currentGeneratedIndividualExercises.length > 0) {
-                currentGeneratedIndividualExercises.forEach(exerciseName => {
-                    if (!existingOptions.has(exerciseName)) {
-                        const option = document.createElement('option');
-                        option.value = exerciseName;
-                        option.textContent = exerciseName;
-                        recordMenuNameSelect.appendChild(option);
-                        existingOptions.add(exerciseName);
-                    }
+            // 現在のプラン（編集後も含む）の個別エクササイズ名を追加
+            if (currentPlanData && currentPlanData.days) {
+                currentPlanData.days.forEach(day => {
+                    day.exercises.forEach(exercise => {
+                        if (exercise.name && !existingOptions.has(exercise.name)) {
+                            const option = document.createElement('option');
+                            option.value = exercise.name;
+                            option.textContent = exercise.name;
+                            recordMenuNameSelect.appendChild(option);
+                            existingOptions.add(exercise.name);
+                        }
+                    });
                 });
             }
 
             // 過去の記録からユニークなエクササイズ名を取得して候補に追加
             const storedRecords = getStoredRecords();
-            // menuName にはエクササイズ名が保存されている想定
-            const uniquePastExerciseNames = [...new Set(storedRecords.map(r => r.menuName))];
+            const uniquePastExerciseNames = [...new Set(storedRecords.map(r => r.menuName))].sort();
             uniquePastExerciseNames.forEach(name => {
-                 if (name && !existingOptions.has(name)) { // name が存在し、かつまだ追加されていない場合
+                 if (name && !existingOptions.has(name)) {
                     const option = document.createElement('option');
                     option.value = name;
                     option.textContent = name + " (過去の記録から)";
@@ -471,162 +457,32 @@
             });
         }
 
-        // 記録フォーム送信時の処理
-        recordForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const newRecord = {
-                id: Date.now().toString(),
-                date: recordDateInput.value,
-                menuName: recordMenuNameSelect.value, // ここには選択されたエクササイズ名が入る
-                weight: recordWeightInput.value ? parseFloat(recordWeightInput.value) : null,
-                reps: recordRepsInput.value ? parseInt(recordRepsInput.value) : null,
-                sets: recordSetsInput.value ? parseInt(recordSetsInput.value) : null,
-            };
-
-            if (!newRecord.date || !newRecord.menuName) {
-                alert("日付とメニュー名（種目）は必須です。");
-                return;
-            }
-
-            saveRecord(newRecord);
-            loadAndDisplayRecords();
-            recordForm.reset();
-            recordDateInput.valueAsDate = new Date();
-            populateRecordMenuNameDropdown(); // フォームリセット後もプルダウンを適切に再構築
+        // 記録フォーム送信時の処理 (変更なし)
+        recordForm.addEventListener('submit', function(event) { /* ... (前回と同様) ... */
+            event.preventDefault(); const newRecord = { id: Date.now().toString(), date: recordDateInput.value, menuName: recordMenuNameSelect.value, weight: recordWeightInput.value ? parseFloat(recordWeightInput.value) : null, reps: recordRepsInput.value ? parseInt(recordRepsInput.value) : null, sets: recordSetsInput.value ? parseInt(recordSetsInput.value) : null, }; if (!newRecord.date || !newRecord.menuName) { alert("日付とメニュー名（種目）は必須です。"); return; } saveRecord(newRecord); loadAndDisplayRecords(); recordForm.reset(); recordDateInput.valueAsDate = new Date(); updateRecordMenuDropdownWithOptions();
         });
-
-        function getStoredRecords() {
-            return JSON.parse(localStorage.getItem('workoutRecords_v2')) || [];
+        // ローカルストレージ関連関数 (getStoredRecords, saveRecord, deleteRecord - 変更なし)
+        function getStoredRecords() { return JSON.parse(localStorage.getItem('workoutRecords_v3_editable')) || []; } // キー名変更
+        function saveRecord(record) { const records = getStoredRecords(); records.push(record); records.sort((a, b) => new Date(b.date) - new Date(a.date)); localStorage.setItem('workoutRecords_v3_editable', JSON.stringify(records)); }
+        function deleteRecord(recordId) { let records = getStoredRecords(); records = records.filter(record => record.id !== recordId); localStorage.setItem('workoutRecords_v3_editable', JSON.stringify(records)); loadAndDisplayRecords(); }
+        // 記録表示関数 (loadAndDisplayRecords - 変更なし)
+        function loadAndDisplayRecords() { /* ... (前回と同様、テーブルヘッダーは「メニュー名 (種目)」) ... */
+            const records = getStoredRecords(); recordsDisplayDiv.innerHTML = ''; if (records.length === 0) { recordsDisplayDiv.innerHTML = '<p class="text-gray-500">まだ記録はありません。</p>'; return; } const table = document.createElement('table'); table.className = 'min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md shadow-sm record-table'; const thead = document.createElement('thead'); thead.className = 'bg-gray-50'; thead.innerHTML = `<tr><th class="px-4 py-2">日付</th><th class="px-4 py-2">メニュー名 (種目)</th><th class="px-4 py-2">重量(kg)</th><th class="px-4 py-2">回数</th><th class="px-4 py-2">セット</th><th class="px-4 py-2">操作</th></tr>`; table.appendChild(thead); const tbody = document.createElement('tbody'); tbody.className = 'bg-white divide-y divide-gray-200'; records.forEach(record => { const tr = document.createElement('tr'); tr.innerHTML = `<td class="px-4 py-2 text-sm text-gray-700">${record.date}</td><td class="px-4 py-2 text-sm text-gray-700">${record.menuName}</td><td class="px-4 py-2 text-sm text-gray-700">${record.weight !== null ? record.weight : '-'}</td><td class="px-4 py-2 text-sm text-gray-700">${record.reps !== null ? record.reps : '-'}</td><td class="px-4 py-2 text-sm text-gray-700">${record.sets !== null ? record.sets : '-'}</td><td class="px-4 py-2 text-sm text-gray-700"><button class="delete-record-btn text-red-500 hover:text-red-700 text-xs" data-id="${record.id}">削除</button></td>`; tbody.appendChild(tr); }); table.appendChild(tbody); recordsDisplayDiv.appendChild(table); document.querySelectorAll('.delete-record-btn').forEach(button => { button.addEventListener('click', function() { if (confirm('この記録を削除してもよろしいですか？')) { deleteRecord(this.dataset.id); } }); });
         }
 
-        function saveRecord(record) {
-            const records = getStoredRecords();
-            records.push(record);
-            records.sort((a, b) => new Date(b.date) - new Date(a.date));
-            localStorage.setItem('workoutRecords_v2', JSON.stringify(records));
-        }
-
-        function deleteRecord(recordId) {
-            let records = getStoredRecords();
-            records = records.filter(record => record.id !== recordId);
-            localStorage.setItem('workoutRecords_v2', JSON.stringify(records));
-            loadAndDisplayRecords();
-        }
-
-        function loadAndDisplayRecords() {
-            const records = getStoredRecords();
-            recordsDisplayDiv.innerHTML = '';
-
-            if (records.length === 0) {
-                recordsDisplayDiv.innerHTML = '<p class="text-gray-500">まだ記録はありません。</p>';
-                return;
-            }
-
-            const table = document.createElement('table');
-            table.className = 'min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md shadow-sm record-table';
-            const thead = document.createElement('thead');
-            thead.className = 'bg-gray-50';
-            thead.innerHTML = `
-                <tr>
-                    <th class="px-4 py-2">日付</th>
-                    <th class="px-4 py-2">メニュー名 (種目)</th> <th class="px-4 py-2">重量(kg)</th>
-                    <th class="px-4 py-2">回数</th>
-                    <th class="px-4 py-2">セット</th>
-                    <th class="px-4 py-2">操作</th>
-                </tr>
-            `;
-            table.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-            tbody.className = 'bg-white divide-y divide-gray-200';
-            records.forEach(record => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-4 py-2 text-sm text-gray-700">${record.date}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">${record.menuName}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">${record.weight !== null ? record.weight : '-'}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">${record.reps !== null ? record.reps : '-'}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">${record.sets !== null ? record.sets : '-'}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">
-                        <button class="delete-record-btn text-red-500 hover:text-red-700 text-xs" data-id="${record.id}">削除</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            table.appendChild(tbody);
-            recordsDisplayDiv.appendChild(table);
-
-            document.querySelectorAll('.delete-record-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('この記録を削除してもよろしいですか？')) {
-                        deleteRecord(this.dataset.id);
-                    }
-                });
-            });
-        }
-
-        // --- ユーティリティ関数 (内容は前回と同様) ---
-        function selectExercises(bodyPart, intensity, count) {
-            const availableExercises = exercises[bodyPart]?.[intensity] || [];
-            return availableExercises.slice(0, count);
-        }
-        function getSetsReps(duration, intensity) {
-            let sets = 3;
-            let reps = "10-12回";
-            if (duration === 'short') sets = 2;
-            if (duration === 'long') sets = 4;
-            if (intensity === 'beginner') reps = "12-15回";
-            if (intensity === 'intermediate') reps = "8-12回";
-            if (intensity === 'advanced') {
-                reps = "6-10回";
-                sets += 1;
-            }
-            if (sets < 2) sets = 2;
-            return `${sets}セット x ${reps}`;
-        }
-        function getDurationText(duration) {
-            switch (duration) {
-                case 'short': return '短時間';
-                case 'medium': return '中時間';
-                case 'long': return '長時間';
-                default: return '';
-            }
-        }
-        function getIntensityText(intensity) {
-            switch (intensity) {
-                case 'beginner': return '初級';
-                case 'intermediate': return '中級';
-                case 'advanced': return '上級';
-                default: return '';
-            }
-        }
-        function getGeneralNotes(intensity) {
-            let notes = [
-                "各種目の前に適切なウォーミングアップ（5-10分程度の軽い有酸素運動や動的ストレッチ）を行いましょう。",
-                "トレーニング後にはクールダウン（静的ストレッチ）を行い、筋肉の回復を促しましょう。",
-                "セット間の休憩（インターバル）は、初級者は60-90秒、中級者は60秒、上級者は目的により60-120秒を目安にしてください。",
-                "常に正しいフォームを意識し、無理な重量は扱わないようにしましょう。怪我の予防が最優先です。",
-                "水分補給を忘れずに行いましょう。",
-                "十分な睡眠とバランスの取れた栄養摂取が、トレーニング効果を高めます。"
-            ];
-            if (intensity === 'beginner') {
-                notes.push("まずは各種目のフォームを覚えることを優先しましょう。軽い重量や自重から始めてください。");
-            } else if (intensity === 'intermediate') {
-                notes.push("徐々に重量や回数を増やしていく「プログレッシブオーバーロード」を意識しましょう。");
-            } else if (intensity === 'advanced') {
-                notes.push("停滞を感じたら、ドロップセットやスーパーセットなどのテクニックを取り入れることも検討しましょう。オーバートレーニングには注意してください。");
-            }
-            return notes;
+        // --- ユーティリティ関数 (selectExercises, getDurationText, getIntensityText, getGeneralNotes - 変更なし) ---
+        function selectExercises(bodyPart, intensity, count) { const availableExercises = exercises[bodyPart]?.[intensity] || []; return availableExercises.slice(0, count); }
+        function getDurationText(duration) { switch (duration) { case 'short': return '短時間'; case 'medium': return '中時間'; case 'long': return '長時間'; default: return ''; } }
+        function getIntensityText(intensity) { switch (intensity) { case 'beginner': return '初級'; case 'intermediate': return '中級'; case 'advanced': return '上級'; default: return ''; } }
+        function getGeneralNotes(intensity) { /* ... (前回と同様) ... */
+            let notes = [ "各種目の前に適切なウォーミングアップ（5-10分程度の軽い有酸素運動や動的ストレッチ）を行いましょう。", "トレーニング後にはクールダウン（静的ストレッチ）を行い、筋肉の回復を促しましょう。", "セット間の休憩（インターバル）は、初級者は60-90秒、中級者は60秒、上級者は目的により60-120秒を目安にしてください。", "常に正しいフォームを意識し、無理な重量は扱わないようにしましょう。怪我の予防が最優先です。", "水分補給を忘れずに行いましょう。", "十分な睡眠とバランスの取れた栄養摂取が、トレーニング効果を高めます。" ]; if (intensity === 'beginner') { notes.push("まずは各種目のフォームを覚えることを優先しましょう。軽い重量や自重から始めてください。"); } else if (intensity === 'intermediate') { notes.push("徐々に重量や回数を増やしていく「プログレッシブオーバーロード」を意識しましょう。"); } else if (intensity === 'advanced') { notes.push("停滞を感じたら、ドロップセットやスーパーセットなどのテクニックを取り入れることも検討しましょう。オーバートレーニングには注意してください。"); } return notes;
         }
 
         // --- 初期化処理 ---
         function initializeApp() {
             setActiveTab(tabMenuCreator, menuCreatorSection);
             recordDateInput.valueAsDate = new Date();
-            generateBtn.click(); // 初期メニューとエクササイズリストを生成
-            // populateRecordMenuNameDropdown(); // generateBtn.click() 内で呼ばれるのでここでは不要な場合もあるが、念のため残しても良い
-            // loadAndDisplayRecords(); // 記録タブがアクティブになった時に呼ばれる
+            generateBtn.click(); // 初期メニュー生成
         }
 
         initializeApp();
